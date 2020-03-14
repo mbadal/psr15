@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Delvesoft\MiddlewareChain;
+namespace Delvesoft\Psr15\MiddlewareChain;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -11,6 +11,25 @@ abstract class AbstractMiddleware implements MiddlewareInterface
 {
     /** @var AbstractMiddleware|null */
     private $next = null;
+
+    public function prepend(AbstractMiddleware $first): self
+    {
+        $first->setNext($this);
+
+        return $first;
+    }
+
+    public function append(AbstractMiddleware $newLast): self
+    {
+        $last = null;
+        for ($actual = $this; $actual !== null; $actual = $actual->getNext()) {
+            $last = $actual;
+        }
+
+        $last->setNext($newLast);
+
+        return $this;
+    }
 
     public function setNext(AbstractMiddleware $next): self
     {
@@ -26,5 +45,10 @@ abstract class AbstractMiddleware implements MiddlewareInterface
         }
 
         return $this->next->process($request, $handler);
+    }
+
+    private function getNext(): ?AbstractMiddleware
+    {
+        return $this->next;
     }
 }
