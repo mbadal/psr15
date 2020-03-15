@@ -20,7 +20,9 @@ class ChainFactory
 
         $first = array_shift($chainItems);
         if (!($first instanceof AbstractMiddlewareChain)) {
-            throw new InvalidArgumentException(sprintf('Chain item: [%s] is not a child of: [%s]', get_class($first), AbstractMiddlewareChain::class));
+            throw new InvalidArgumentException(
+                sprintf('Chain item: [%s] is not a child of: [%s]', get_class($first), AbstractMiddlewareChain::class)
+            );
         }
 
         if ($chainItems === []) {
@@ -31,7 +33,9 @@ class ChainFactory
         while ($chainItems !== []) {
             $actual = array_shift($chainItems);
             if (!($actual instanceof AbstractMiddlewareChain)) {
-                throw new InvalidArgumentException(sprintf('Chain item: [%s] is not a child of: [%s]', get_class($actual), AbstractMiddlewareChain::class));
+                throw new InvalidArgumentException(
+                    sprintf('Chain item: [%s] is not a child of: [%s]', get_class($actual), AbstractMiddlewareChain::class)
+                );
             }
 
             $previous->setNext($actual);
