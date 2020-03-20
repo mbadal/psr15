@@ -18,24 +18,20 @@ class ChainFactory
             throw new InvalidArgumentException('Could not create middleware chain from an empty array');
         }
 
-        $first = array_shift($chainItems);
-        if (!($first instanceof AbstractMiddlewareChain)) {
-            throw new InvalidArgumentException(
-                sprintf('Chain item: [%s] is not a child of: [%s]', get_class($first), AbstractMiddlewareChain::class)
-            );
-        }
-
-        if ($chainItems === []) {
-            return $first;
-        }
-
-        $previous = $first;
-        while ($chainItems !== []) {
-            $actual = array_shift($chainItems);
+        $first    = null;
+        $previous = null;
+        foreach ($chainItems as $actual) {
             if (!($actual instanceof AbstractMiddlewareChain)) {
                 throw new InvalidArgumentException(
                     sprintf('Chain item: [%s] is not a child of: [%s]', get_class($actual), AbstractMiddlewareChain::class)
                 );
+            }
+
+            if ($previous === null) {
+                $previous = $actual;
+                $first    = $actual;
+
+                continue;
             }
 
             $previous->setNext($actual);
