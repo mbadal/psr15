@@ -3,6 +3,7 @@
 namespace Delvesoft\Tests\Unit\Middleware;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
+use Delvesoft\Psr15\Middleware\Factory\ChainFactory;
 use Delvesoft\Psr15\RequestHandler\AbstractRequestHandler;
 use Mockery;
 use Mockery\MockInterface;
@@ -14,43 +15,72 @@ class AbstractMiddlewareChainTest extends TestCase
 {
     public function testCanPrepend()
     {
-        $request = new ServerRequest('GET', '/test');
-        /** @var AbstractRequestHandler|MockInterface $handler */
-        $handler = Mockery::mock(AbstractRequestHandler::class);
-        $handler
-            ->shouldReceive('handle')
+        /** @var AbstractMiddlewareChain|MockInterface $middleware1 */
+        $middleware1 = Mockery::mock(AbstractMiddlewareChain::class);
+
+        /** @var AbstractMiddlewareChain|MockInterface $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChain::class);
+        $middleware2->shouldReceive('prepend')->once()->withArgs(
+            [
+                $middleware1
+            ]
+        );
+
+        $middleware1->shouldReceive('setNext')->once()->withArgs([$middleware2]);
+
+        $middleware2->prepend($middleware1);
+
+        $this->assertTrue(true);
+    }
+
+    public function testCanAppend()
+    {
+        /** @var AbstractMiddlewareChain|MockInterface $middleware1 */
+        $middleware1 = Mockery::mock(AbstractMiddlewareChain::class);
+
+        /** @var AbstractMiddlewareChain|MockInterface $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChain::class);
+
+        /** @var AbstractMiddlewareChain|MockInterface $middleware3 */
+        $middleware3 = Mockery::mock(AbstractMiddlewareChain::class);
+
+        $middleware1
+            ->shouldReceive('setNext')
+            ->once()->withArgs(
+                [
+                    $middleware2
+                ]
+            );
+
+        $middleware2
+            ->shouldReceive('setNext')
+            ->once()->withArgs(
+                [
+                    $middleware3
+                ]
+            );
+
+        $chainStart = ChainFactory::createFromArray(
+            [
+                $middleware1,
+                $middleware2,
+                $middleware3,
+            ]
+        );
+
+        /** @var AbstractMiddlewareChain|MockInterface $middleware4 */
+        $middleware4 = Mockery::mock(AbstractMiddlewareChain::class);
+
+        $middleware1
+            ->shouldReceive('append')
             ->once()
             ->withArgs(
                 [
-                    $request
+                    $middleware4
                 ]
-            )
-            ->andReturn(
-                new Response(200, [], 'OK')
             );
 
-        /** @var AbstractMiddlewareChain|MockInterface $toPrepend */
-        $toPrepend = Mockery::mock(AbstractMiddlewareChain::class);
-
-        $middleware = Mockery::mock(AbstractMiddlewareChain::class);
-        $middleware->shouldReceive('prepend')->once()->withArgs(
-            [
-                $toPrepend
-            ]
-        );
-        $middleware->shouldReceive('process')->once()->withArgs(
-            [
-                $request,
-                $handler
-            ]
-        );
-
-        $toPrepend->shouldReceive('setNext')->once()->withArgs([$middleware]);
-        $toPrepend->shouldReceive('process')->once()->withArgs([$request, $handler]);
-
-        $middleware->prepend($toPrepend);
-        $toPrepend->process($request, $handler);
-        
+        $chainStart->append($middleware4);
         $this->assertTrue(true);
     }
 }
