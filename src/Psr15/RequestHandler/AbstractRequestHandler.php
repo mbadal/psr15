@@ -10,7 +10,7 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
 {
     public static function createFromCallable(callable $handlerImplementation, ?callable $handlerResponseTransformation = null): self
     {
-        return new class($handlerImplementation, $handlerResponseTransformation) extends AbstractRequestHandler implements RequestHandlerInterface {
+        return new class($handlerImplementation, $handlerResponseTransformation) extends AbstractRequestHandler {
 
             /** @var callable */
             private $handlerImplementation;
@@ -27,11 +27,11 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $handlerResponse = call_user_func($this->handlerImplementation, $request);
-                if ($this->handlerResponseTransformation !== null) {
-                    return call_user_func($this->handlerResponseTransformation, $handlerResponse);
+                if ($this->handlerResponseTransformation === null) {
+                    return $handlerResponse;
                 }
 
-                return $handlerResponse;
+                return call_user_func($this->handlerResponseTransformation, $handlerResponse);
             }
         };
     }
