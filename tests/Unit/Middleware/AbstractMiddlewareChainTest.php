@@ -10,7 +10,6 @@ use Mockery\MockInterface;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 class AbstractMiddlewareChainTest extends TestCase
 {

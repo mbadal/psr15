@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Delvesoft\Tests\Unit\Middleware;
+namespace Delvesoft\Tests\Integration\Middleware;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
 use Nyholm\Psr7\ServerRequest;
@@ -8,17 +8,17 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class Middleware1 extends AbstractMiddlewareChain
+class Middleware2 extends AbstractMiddlewareChain
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $body = $request->getBody();
-        $newRequest = new ServerRequest(
+        $request = new ServerRequest(
             $request->getMethod(),
-            $request->getHeaders(),
-            "{$body}1"
+            $request->getUri(),
+            [],
+            "{$request->getBody()}2"
         );
 
-        return $this->processNext($newRequest, $handler);
+        return $this->processNext($request, $handler);
     }
 }
