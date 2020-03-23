@@ -3,6 +3,7 @@
 namespace Delvesoft\Psr15\Middleware\Factory;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
+use Delvesoft\Psr15\Middleware\Exception\CouldNotCreateChainException;
 use InvalidArgumentException;
 
 class MiddlewareChainFactory
@@ -11,18 +12,19 @@ class MiddlewareChainFactory
      * @param AbstractMiddlewareChain[] $chainItems
      *
      * @return AbstractMiddlewareChain
+     * @throws CouldNotCreateChainException
      */
     public static function createFromArray(array $chainItems): AbstractMiddlewareChain
     {
         if ($chainItems === []) {
-            throw new InvalidArgumentException('Could not create middleware chain from an empty array');
+            throw new CouldNotCreateChainException('Could not create middleware chain from an empty array');
         }
 
         $first    = null;
         $previous = null;
         foreach ($chainItems as $actual) {
             if (!($actual instanceof AbstractMiddlewareChain)) {
-                throw new InvalidArgumentException(
+                throw new CouldNotCreateChainException(
                     sprintf('Chain item: [%s] is not a child of: [%s]', get_class($actual), AbstractMiddlewareChain::class)
                 );
             }

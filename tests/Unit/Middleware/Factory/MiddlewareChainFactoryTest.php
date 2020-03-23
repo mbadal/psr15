@@ -2,13 +2,14 @@
 
 namespace Delvesoft\Tests\Unit\Middleware\Factory;
 
+use Delvesoft\Psr15\Middleware\Exception\CouldNotCreateChainException;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Mockery;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 
-class ChainFactoryTest extends TestCase
+class MiddlewareChainFactoryTest extends TestCase
 {
     public function testCanCreate()
     {
@@ -46,5 +47,13 @@ class ChainFactoryTest extends TestCase
         );
 
         $this->assertEquals($chain, $middleware1);
+    }
+
+    public function testWillThrowExceptionOnEmptyArray()
+    {
+        $this->expectException(CouldNotCreateChainException::class);
+        MiddlewareChainFactory::createFromArray(
+            []
+        );
     }
 }
