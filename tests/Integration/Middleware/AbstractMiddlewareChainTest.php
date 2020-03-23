@@ -2,7 +2,7 @@
 
 namespace Delvesoft\Tests\Integration\Middleware;
 
-use Delvesoft\Psr15\Middleware\Factory\ChainFactory;
+use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Delvesoft\Psr15\RequestHandler\AbstractRequestHandler;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -28,7 +28,7 @@ class AbstractMiddlewareChainTest extends TestCase
         $middleware2 = new Middleware2();
         $middleware3 = new Middleware3();
 
-        $chain = ChainFactory::createFromArray(
+        $chain = MiddlewareChainFactory::createFromArray(
             [
                 $middleware1,
                 $middleware2,

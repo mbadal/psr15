@@ -5,7 +5,7 @@ namespace Delvesoft\Psr15\Middleware\Factory;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
 use InvalidArgumentException;
 
-class ChainFactory
+class MiddlewareChainFactory
 {
     /**
      * @param AbstractMiddlewareChain[] $chainItems

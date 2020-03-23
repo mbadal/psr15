@@ -3,7 +3,7 @@
 namespace Delvesoft\Tests\Unit\Middleware;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
-use Delvesoft\Psr15\Middleware\Factory\ChainFactory;
+use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Delvesoft\Psr15\RequestHandler\AbstractRequestHandler;
 use Mockery;
 use Mockery\MockInterface;
@@ -60,7 +60,7 @@ class AbstractMiddlewareChainTest extends TestCase
                 ]
             );
 
-        $chainStart = ChainFactory::createFromArray(
+        $chainStart = MiddlewareChainFactory::createFromArray(
             [
                 $middleware1,
                 $middleware2,
@@ -184,7 +184,7 @@ class AbstractMiddlewareChainTest extends TestCase
                 $response
             );
 
-        $chainStart = ChainFactory::createFromArray(
+        $chainStart = MiddlewareChainFactory::createFromArray(
             [
                 $middleware1,
                 $middleware2,

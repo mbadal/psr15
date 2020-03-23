@@ -2,7 +2,7 @@
 
 namespace Delvesoft\Tests\Unit\Middleware\Factory;
 
-use Delvesoft\Psr15\Middleware\Factory\ChainFactory;
+use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Mockery;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
 use Mockery\MockInterface;
@@ -37,7 +37,7 @@ class ChainFactoryTest extends TestCase
                 ]
             );
 
-        $chain = ChainFactory::createFromArray(
+        $chain = MiddlewareChainFactory::createFromArray(
             [
                 $middleware1,
                 $middleware2,
