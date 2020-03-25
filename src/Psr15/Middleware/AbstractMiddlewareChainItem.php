@@ -7,19 +7,19 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-abstract class AbstractMiddlewareChain implements MiddlewareInterface
+abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
 {
-    /** @var AbstractMiddlewareChain|null */
+    /** @var AbstractMiddlewareChainItem|null */
     private $next = null;
 
-    public function prepend(AbstractMiddlewareChain $first): self
+    public function prepend(AbstractMiddlewareChainItem $first): self
     {
         $first->setNext($this);
 
         return $first;
     }
 
-    public function append(AbstractMiddlewareChain $newLast): self
+    public function append(AbstractMiddlewareChainItem $newLast): self
     {
         $last = null;
         for ($actual = $this; $actual !== null; $actual = $actual->getNext()) {
@@ -31,7 +31,7 @@ abstract class AbstractMiddlewareChain implements MiddlewareInterface
         return $this;
     }
 
-    public function setNext(AbstractMiddlewareChain $next): self
+    public function setNext(AbstractMiddlewareChainItem $next): self
     {
         $this->next = $next;
 
@@ -47,7 +47,7 @@ abstract class AbstractMiddlewareChain implements MiddlewareInterface
         return $this->next->process($request, $handler);
     }
 
-    private function getNext(): ?AbstractMiddlewareChain
+    private function getNext(): ?AbstractMiddlewareChainItem
     {
         return $this->next;
     }

@@ -2,7 +2,7 @@
 
 namespace Delvesoft\Tests\Unit\Middleware;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChain;
+use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Delvesoft\Psr15\RequestHandler\AbstractRequestHandler;
 use Mockery;
@@ -15,11 +15,11 @@ class AbstractMiddlewareChainTest extends TestCase
 {
     public function testCanPrepend()
     {
-        /** @var AbstractMiddlewareChain|MockInterface $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware1 */
+        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware2 */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
         $middleware2->shouldReceive('prepend')->once()->withArgs(
             [
                 $middleware1
@@ -35,14 +35,14 @@ class AbstractMiddlewareChainTest extends TestCase
 
     public function testCanAppend()
     {
-        /** @var AbstractMiddlewareChain|MockInterface $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware1 */
+        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware2 */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware3 */
-        $middleware3 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware3 */
+        $middleware3 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
         $middleware1
             ->shouldReceive('setNext')
@@ -68,8 +68,8 @@ class AbstractMiddlewareChainTest extends TestCase
             ]
         );
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware4 */
-        $middleware4 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware4 */
+        $middleware4 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
         $middleware1
             ->shouldReceive('append')
@@ -91,14 +91,14 @@ class AbstractMiddlewareChainTest extends TestCase
         /** @var AbstractRequestHandler|MockInterface $handler */
         $handler = Mockery::mock(AbstractRequestHandler::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware1 */
+        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware2 */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var AbstractMiddlewareChain|MockInterface $middleware3 */
-        $middleware3 = Mockery::mock(AbstractMiddlewareChain::class);
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware3 */
+        $middleware3 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
         $middleware1
             ->shouldReceive('setNext')
