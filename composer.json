@@ -1,9 +1,23 @@
 {
+	"name": "delvesoft/psr15",
+	"description": "PSR-15 implementation",
+	"keywords": [
+		"psr-7",
+		"psr-15",
+		"middleware",
+		"handler"
+	],
     "require": {
 		"php": ">= 7.3",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0"
     },
+	"authors": [
+		{
+			"name": "Matej Bádal",
+			"email": "matejbadal@gmail.com"
+		}
+	],
 	"autoload": {
 		"psr-4": {
 			"Delvesoft\\": "src/"
