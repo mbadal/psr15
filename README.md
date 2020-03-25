@@ -14,4 +14,4 @@ Library consists of 2 abstract classes:
 composer require delvesoft/psr15
 ```
 
-**Disclaimer**: highly inspired by package https://github.com/noglitchyo/middleware-collection-request-handler
+Highly inspired by package https://github.com/noglitchyo/middleware-collection-request-handler
