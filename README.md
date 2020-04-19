@@ -1,5 +1,5 @@
 # PSR 15
-Lightweight implementation of PSR-15 using Chain of Responsibility pattern.
+Lightweight implementation of PSR-15 using Chain of Responsibility pattern with preparation for PSR-17 factories.
 
 ## Table of contents
 Library consists of 2 abstract classes:

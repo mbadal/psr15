@@ -4,7 +4,6 @@ namespace Delvesoft\Psr15\Middleware\Factory;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Exception\CouldNotCreateChainException;
-use InvalidArgumentException;
 
 class MiddlewareChainFactory
 {

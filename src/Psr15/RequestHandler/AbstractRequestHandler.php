@@ -2,12 +2,21 @@
 
 namespace Delvesoft\Psr15\RequestHandler;
 
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 abstract class AbstractRequestHandler implements RequestHandlerInterface
 {
+    /** @var ResponseFactoryInterface */
+    private $responseFactory;
+
+    public function __construct(ResponseFactoryInterface $responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
     public static function createFromCallable(callable $handlerImplementation, ?callable $handlerResponseTransformation = null): self
     {
         return new class($handlerImplementation, $handlerResponseTransformation) extends AbstractRequestHandler {
@@ -34,5 +43,10 @@ abstract class AbstractRequestHandler implements RequestHandlerInterface
                 return call_user_func($this->handlerResponseTransformation, $handlerResponse);
             }
         };
+    }
+
+    protected function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+    {
+        return $this->responseFactory->createResponse($code, $reasonPhrase);
     }
 }
