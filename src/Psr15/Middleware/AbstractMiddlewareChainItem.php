@@ -53,6 +53,20 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
         return $this;
     }
 
+    public function listChainClassNames(): array
+    {
+        $names = [
+            get_class($this)
+        ];
+        $current = $this;
+        while (($next = $current->getNext()) !== null) {
+            $names[] = get_class($next);
+            $current = $next;
+        }
+
+        return $names;
+    }
+
     protected function processNext(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->next === null) {
