@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace Delvesoft\Psr15\Middleware\Factory;
 
@@ -19,7 +20,7 @@ class MiddlewareChainFactory
             throw new CouldNotCreateChainException('Could not create middleware chain from an empty array');
         }
 
-        $first    = null;
+        $first    = current($chainItems);
         $previous = null;
         foreach ($chainItems as $actual) {
             if (!($actual instanceof AbstractMiddlewareChainItem)) {
@@ -30,7 +31,6 @@ class MiddlewareChainFactory
 
             if ($previous === null) {
                 $previous = $actual;
-                $first    = $actual;
 
                 continue;
             }

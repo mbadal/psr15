@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Tests\Integration\Middleware;
 
@@ -25,7 +27,7 @@ class AbstractMiddlewareChainTest extends TestCase
             }
         );
 
-        $factory = new Psr17Factory();
+        $factory     = new Psr17Factory();
         $middleware1 = new Middleware1($factory, $factory);
         $middleware2 = new Middleware2($factory, $factory);
         $middleware3 = new Middleware3($factory, $factory);
@@ -40,5 +42,35 @@ class AbstractMiddlewareChainTest extends TestCase
 
         $response = $chain->process($request, $handler);
         $this->assertEquals('123', $response->getBody());
+    }
+
+    public function testCanListChainedClassNames()
+    {
+        $factory     = new Psr17Factory();
+        $middleware1 = new Middleware1($factory, $factory);
+        $middleware2 = new Middleware2($factory, $factory);
+        $middleware3 = new Middleware3($factory, $factory);
+
+        $chain = MiddlewareChainFactory::createFromArray(
+            [
+                $middleware1,
+                $middleware2,
+                $middleware3,
+            ]
+        );
+
+        $classNamesList    = $chain->listChainClassNames();
+        $classesToVerified = [
+            0 => $middleware1,
+            1 => $middleware2,
+            2 => $middleware3,
+        ];
+
+        foreach ($classNamesList as $index => $className) {
+            $this->assertEquals(
+                get_class($classesToVerified[$index]),
+                $className
+            );
+        }
     }
 }

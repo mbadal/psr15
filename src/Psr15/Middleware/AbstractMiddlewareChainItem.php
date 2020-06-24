@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Psr15\Middleware;
 
@@ -36,7 +38,7 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
 
     public function append(AbstractMiddlewareChainItem $newLast): self
     {
-        $last = null;
+        $last = $this;
         for ($actual = $this; $actual !== null; $actual = $actual->getNext()) {
             $last = $actual;
         }
@@ -53,9 +55,12 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function listChainClassNames(): array
     {
-        $names = [
+        $names   = [
             get_class($this)
         ];
         $current = $this;
@@ -76,14 +81,39 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
         return $this->next->process($request, $handler);
     }
 
-    protected function createServerRequest(string $method, UriInterface $uri, array $serverParams = []): ServerRequestInterface
+    /**
+     * @param string       $method
+     * @param UriInterface $uri
+     * @param string[]     $serverParams
+     * @param string[][]   $headers
+     *
+     * @return ServerRequestInterface
+     */
+    protected function createServerRequest(string $method, UriInterface $uri, array $serverParams = [], array $headers = []): ServerRequestInterface
     {
-        return $this->serverRequestFactory->createServerRequest($method, $uri, $serverParams);
+        $serverRequest = $this->serverRequestFactory->createServerRequest($method, $uri, $serverParams);
+        foreach ($headers as $headerName => $headerValue) {
+            $serverRequest->withHeader($headerName, $headerValue);
+        }
+
+        return $serverRequest;
     }
 
-    protected function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+    /**
+     * @param int        $code
+     * @param string     $reasonPhrase
+     * @param string[][] $headers
+     *
+     * @return ResponseInterface
+     */
+    protected function createResponse(int $code = 200, string $reasonPhrase = '', array $headers = []): ResponseInterface
     {
-        return $this->responseFactory->createResponse($code, $reasonPhrase);
+        $response = $this->responseFactory->createResponse($code, $reasonPhrase);
+        foreach ($headers as $headerName => $headerValue) {
+            $response->withHeader($headerName, $headerValue);
+        }
+
+        return $response;
     }
 
     private function getNext(): ?AbstractMiddlewareChainItem
