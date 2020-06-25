@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace Delvesoft\Tests\Integration\Middleware;
 
+use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Delvesoft\Psr15\RequestHandler\AbstractRequestHandler;
+use Mockery;
+use Mockery\MockInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
+use Nyholm\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 
 class AbstractMiddlewareChainTest extends TestCase
 {
@@ -72,5 +79,99 @@ class AbstractMiddlewareChainTest extends TestCase
                 $className
             );
         }
+    }
+
+    public function testCanCreateServerRequest()
+    {
+        $reflectionClass = new ReflectionClass(AbstractMiddlewareChainItem::class);
+        $method          = $reflectionClass->getMethod('createServerRequest');
+        $method->setAccessible(true);
+
+        $factory = new Psr17Factory();
+
+        $httpMethod            = 'GET';
+        $uri                   = new Uri('/test');
+        $serverParams          = [
+            'HTTP_REFERER' => '/start'
+        ];
+        $headers               = [
+            'Content-Type' => [
+                'application/json'
+            ]
+        ];
+        $expectedServerRequest = new ServerRequest($httpMethod, $uri, [], null, '1.1', $serverParams);
+
+        /** @var MockInterface|Psr17Factory $serverRequestFactory */
+        $serverRequestFactory = Mockery::mock($factory, ServerRequestFactoryInterface::class);
+        $serverRequestFactory
+            ->shouldReceive('createServerRequest')
+            ->once()
+            ->andReturn(
+                $expectedServerRequest
+            );
+
+        $instance = new Middleware1(
+            $serverRequestFactory,
+            $factory
+        );
+
+        foreach ($headers as $headerKey => $headerValue) {
+            $expectedServerRequest = $expectedServerRequest->withHeader($headerKey, $headerValue);
+        }
+
+        /** @var ServerRequest $returnedServerRequest */
+        $returnedServerRequest = $method->invoke($instance, $httpMethod, $uri, $serverParams, $headers);
+        $this->assertEquals($expectedServerRequest->getMethod(), $returnedServerRequest->getMethod());
+        $this->assertEquals($expectedServerRequest->getUri(), $returnedServerRequest->getUri());
+        $this->assertEquals($expectedServerRequest->getServerParams(), $returnedServerRequest->getServerParams());
+        $this->assertEquals($expectedServerRequest->getHeaders(), $returnedServerRequest->getHeaders());
+    }
+
+    public function testCanCreateResponse()
+    {
+        $reflectionClass = new ReflectionClass(AbstractMiddlewareChainItem::class);
+        $method          = $reflectionClass->getMethod('createResponse');
+        $method->setAccessible(true);
+
+        $code             = 200;
+        $reasonPhrase     = 'OK';
+        $headers          = [
+            'Content-Type' => [
+                'application/json'
+            ]
+        ];
+        $expectedResponse = new Response($code, [], null, '1.1', $reasonPhrase);
+        $factory          = new Psr17Factory();
+
+        /** @var MockInterface|Psr17Factory $responseFactory */
+        $responseFactory = Mockery::mock($factory, ResponseFactoryInterface::class);
+        $responseFactory
+            ->shouldReceive('createResponse')
+            ->once()
+            ->andReturn(
+                $expectedResponse
+            );
+
+        $instance = new Middleware1(
+            $factory,
+            $responseFactory
+
+        );
+
+        foreach ($headers as $headerKey => $headerValue) {
+            $expectedResponse = $expectedResponse->withHeader($headerKey, $headerValue);
+        }
+
+        /** @var Response $returnedResponse */
+        $returnedResponse = $method->invoke($instance, $code, $reasonPhrase, $headers);
+        $this->assertEquals($expectedResponse->getStatusCode(), $returnedResponse->getStatusCode());
+        $this->assertEquals($expectedResponse->getReasonPhrase(), $returnedResponse->getReasonPhrase());
+        $this->assertEquals($expectedResponse->getHeaders(), $returnedResponse->getHeaders());
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }

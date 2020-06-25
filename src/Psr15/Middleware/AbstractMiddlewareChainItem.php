@@ -93,7 +93,7 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
     {
         $serverRequest = $this->serverRequestFactory->createServerRequest($method, $uri, $serverParams);
         foreach ($headers as $headerName => $headerValue) {
-            $serverRequest->withHeader($headerName, $headerValue);
+            $serverRequest = $serverRequest->withHeader($headerName, $headerValue);
         }
 
         return $serverRequest;
@@ -110,7 +110,7 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
     {
         $response = $this->responseFactory->createResponse($code, $reasonPhrase);
         foreach ($headers as $headerName => $headerValue) {
-            $response->withHeader($headerName, $headerValue);
+            $response = $response->withHeader($headerName, $headerValue);
         }
 
         return $response;
