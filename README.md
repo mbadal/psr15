@@ -1,8 +1,6 @@
 # PSR 15
 Lightweight implementation of PSR-15 using Chain of Responsibility pattern with preparation for the PSR-17 factories.
 
-[![Build Status](https://travis-ci.org/mbadal/psr15.svg?branch=master)](https://travis-ci.org/mbadal/psr15)
-
 ## Table of contents
 Library consists of 2 abstract classes:
 * [AbstractMiddlewareChainItem](https://github.com/mbadal/psr15/blob/master/src/Psr15/Middleware/AbstractMiddlewareChainItem.php) - Abstract base class for Middleware chain item
