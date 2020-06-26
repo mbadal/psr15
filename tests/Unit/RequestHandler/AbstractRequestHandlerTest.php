@@ -60,4 +60,10 @@ class AbstractRequestHandlerTest extends TestCase
         $response = $handler->handle($request);
         $this->assertEquals('test', $response->getBody());
     }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
 }

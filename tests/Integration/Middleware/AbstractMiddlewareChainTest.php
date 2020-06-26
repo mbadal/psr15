@@ -169,6 +169,20 @@ class AbstractMiddlewareChainTest extends TestCase
         $this->assertEquals($expectedResponse->getHeaders(), $returnedResponse->getHeaders());
     }
 
+    public function textCanTellWhetherHasSuccessorMiddleware()
+    {
+        $factory          = new Psr17Factory();
+        $middleware = new Middleware1(
+            $factory,
+            $factory
+        );
+
+        $this->assertFalse($middleware->hasNext());
+
+        $middleware->setNext(new Middleware2($factory, $factory));
+        $this->assertTrue($middleware->hasNext());
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();
