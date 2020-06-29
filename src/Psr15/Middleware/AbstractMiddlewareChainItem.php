@@ -79,7 +79,7 @@ abstract class AbstractMiddlewareChainItem implements MiddlewareInterface
 
     protected function processNext(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->hasNext()) {
+        if ($this->next === null) {
             return $handler->handle($request);
         }
 
