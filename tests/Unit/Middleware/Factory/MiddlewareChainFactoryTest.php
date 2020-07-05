@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Tests\Unit\Middleware\Factory;
 
+use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Exception\CouldNotCreateChainException;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Mockery;
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -22,20 +24,18 @@ class MiddlewareChainFactoryTest extends TestCase
         /** @var AbstractMiddlewareChainItem|MockInterface $middleware3 */
         $middleware3 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
+        $times          = 1;
+        $argumentsArray = [
+            1 => $middleware2,
+            2 => $middleware3,
+        ];
         $middleware1
-            ->shouldReceive('setNext')
-            ->once()->withArgs(
-                [
-                    $middleware2
-                ]
-            );
-
-        $middleware2
-            ->shouldReceive('setNext')
-            ->once()->withArgs(
-                [
-                    $middleware3
-                ]
+            ->shouldReceive('append')
+            ->times(2)
+            ->withArgs(
+                function ($argument) use ($argumentsArray, &$times) {
+                    return ($argument === $argumentsArray[$times++]);
+                }
             );
 
         $chain = MiddlewareChainFactory::createFromArray(

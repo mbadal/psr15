@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Delvesoft\Tests\Unit\Middleware;
@@ -22,20 +23,22 @@ class AbstractMiddlewareChainTest extends TestCase
         /** @var AbstractMiddlewareChainItem|MockInterface $middleware3 */
         $middleware3 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $middleware1
-            ->shouldReceive('setNext')
-            ->once()->withArgs(
-                [
-                    $middleware2
-                ]
-            );
+        /** @var AbstractMiddlewareChainItem|MockInterface $middleware4 */
+        $middleware4 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $middleware2
-            ->shouldReceive('setNext')
-            ->once()->withArgs(
-                [
-                    $middleware3
-                ]
+        $times          = 1;
+        $argumentsArray = [
+            1 => $middleware2,
+            2 => $middleware3,
+            3 => $middleware4,
+        ];
+        $middleware1
+            ->shouldReceive('append')
+            ->times(3)
+            ->withArgs(
+                function ($argument) use ($argumentsArray, &$times) {
+                    return ($argument === $argumentsArray[$times++]);
+                }
             );
 
         $chainStart = MiddlewareChainFactory::createFromArray(
@@ -45,18 +48,6 @@ class AbstractMiddlewareChainTest extends TestCase
                 $middleware3,
             ]
         );
-
-        /** @var AbstractMiddlewareChainItem|MockInterface $middleware4 */
-        $middleware4 = Mockery::mock(AbstractMiddlewareChainItem::class);
-
-        $middleware1
-            ->shouldReceive('append')
-            ->once()
-            ->withArgs(
-                [
-                    $middleware4
-                ]
-            );
 
         $chainStart->append($middleware4);
         $this->assertTrue(true);

@@ -81,6 +81,40 @@ class AbstractMiddlewareChainTest extends TestCase
         }
     }
 
+    public function testCanAppend()
+    {
+        $factory     = new Psr17Factory();
+        $middleware1 = new Middleware1($factory, $factory);
+        $middleware2 = new Middleware2($factory, $factory);
+        $middleware3 = new Middleware3($factory, $factory);
+
+        $this->assertFalse($middleware1->hasNext());
+        $middleware1->append($middleware2);
+        $this->assertTrue($middleware1->hasNext());
+        $this->assertEquals([Middleware1::class, Middleware2::class], $middleware1->listChainClassNames());
+
+        $middleware1->append($middleware3);
+        $this->assertTrue($middleware1->hasNext());
+        $this->assertEquals([Middleware1::class, Middleware2::class, Middleware3::class], $middleware1->listChainClassNames());
+    }
+
+    public function testCanSetNext()
+    {
+        $factory     = new Psr17Factory();
+        $middleware1 = new Middleware1($factory, $factory);
+        $middleware2 = new Middleware2($factory, $factory);
+        $middleware3 = new Middleware3($factory, $factory);
+
+        $this->assertFalse($middleware1->hasNext());
+        $middleware1->setNext($middleware2);
+        $this->assertTrue($middleware1->hasNext());
+        $this->assertEquals([Middleware1::class, Middleware2::class], $middleware1->listChainClassNames());
+
+        $middleware1->setNext($middleware3);
+        $this->assertTrue($middleware1->hasNext());
+        $this->assertEquals([Middleware1::class, Middleware3::class], $middleware1->listChainClassNames());
+    }
+
     public function testCanCreateServerRequest()
     {
         $reflectionClass = new ReflectionClass(AbstractMiddlewareChainItem::class);

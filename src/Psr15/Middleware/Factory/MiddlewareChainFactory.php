@@ -21,22 +21,15 @@ class MiddlewareChainFactory
         }
 
         $first    = current($chainItems);
-        $previous = null;
-        foreach ($chainItems as $actual) {
-            if (!($actual instanceof AbstractMiddlewareChainItem)) {
+        array_shift($chainItems);
+        foreach ($chainItems as $item) {
+            if (!($item instanceof AbstractMiddlewareChainItem)) {
                 throw new CouldNotCreateChainException(
-                    sprintf('Chain item: [%s] is not a child of: [%s]', get_class($actual), AbstractMiddlewareChainItem::class)
+                    sprintf('Chain item: [%s] is not a child of: [%s]', get_class($item), AbstractMiddlewareChainItem::class)
                 );
             }
 
-            if ($previous === null) {
-                $previous = $actual;
-
-                continue;
-            }
-
-            $previous->setNext($actual);
-            $previous = $actual;
+            $first->append($item);
         }
 
         return $first;
