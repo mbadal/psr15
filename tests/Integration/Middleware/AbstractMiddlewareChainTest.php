@@ -81,6 +81,24 @@ class AbstractMiddlewareChainTest extends TestCase
         }
     }
 
+    public function testCanPrepend()
+    {
+        $factory     = new Psr17Factory();
+        $middleware1 = new Middleware1($factory, $factory);
+        $middleware2 = new Middleware2($factory, $factory);
+        $middleware3 = new Middleware3($factory, $factory);
+
+        $this->assertFalse($middleware1->hasNext());
+        $chainStart = $middleware1->prepend($middleware2);
+        $this->assertTrue($chainStart->hasNext());
+        $this->assertEquals([Middleware2::class, Middleware1::class], $chainStart->listChainClassNames());
+        $this->assertEquals(Middleware2::class, get_class($chainStart));
+
+        $chainStart = $chainStart->prepend($middleware3);
+        $this->assertEquals([Middleware3::class, Middleware2::class, Middleware1::class], $chainStart->listChainClassNames());
+        $this->assertEquals(Middleware3::class, get_class($chainStart));
+    }
+
     public function testCanAppend()
     {
         $factory     = new Psr17Factory();
