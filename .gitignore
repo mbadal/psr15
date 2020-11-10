@@ -1,5 +1,7 @@
 .*
 !.gitignore
 !.travis.yml
+!docker/.env.dist
 vendor
+build
 composer.lock
